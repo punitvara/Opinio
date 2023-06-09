@@ -18,7 +18,7 @@ market_manager.register_user(admin_user)
 # Inject liquidity for the created question
 initial_yes_price = 5
 initial_no_price = 5
-liquidity_quantity = 1000
+liquidity_quantity = 10
 
 # Admin creates a question and gets its ID
 question_id = admin_user.create_question(market_manager, "Will team A win against team B?")
@@ -36,6 +36,7 @@ market_manager.register_user(Ramesh)
 # Users deposit some funds to their wallets
 Ramesh.make_deposit(1000)
 
+print ("RAMESH deposits :")
 Ramesh.display_user_balance()
 
 # Normal user places a buy order for question 1
@@ -47,17 +48,20 @@ liquidity = market.get_liquidity(question_id)
 print(f"Liquidity for question {question_id}: YES - {liquidity['YES']}, NO - {liquidity['NO']}")
 
 
-# Ramesh.place_order(market_manager, question_id=question_id, trade_type="sell", quantity=8, side="YES", price=6)
+Ramesh.place_order(market_manager, question_id=question_id, trade_type="sell", quantity=8, side="YES", price=6)
 
 # Create a normal user
-John = User(user_id=2)
+John = User(user_id=3)
 market_manager.register_user(John)
 
 # Users deposit some funds to their wallets
 John.make_deposit(1000)
 
+print ("John deposits :")
+John.display_user_balance()
+
 # Normal user places a buy order for question 1
-John.place_order(market_manager, question_id=question_id, trade_type="buy", quantity=5, side="YES", price=5)
+John.place_order(market_manager, question_id=question_id, trade_type="buy", quantity=5, side="YES", price=6)
 
 John.list_user_positions()
 

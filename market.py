@@ -55,6 +55,7 @@ class Market:
 
             # If the highest buy order price is >= the lowest sell order price
             if buy_order.price >= sell_order.price:
+                print (buy_order.price, sell_order.price)
                 # Execute trade
                 trade_price = (buy_order.price + sell_order.price) / 2
                 trade_quantity = min(buy_order.quantity, sell_order.quantity)

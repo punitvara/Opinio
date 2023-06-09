@@ -21,13 +21,13 @@ class User:
         if not self.question_quantities:
             print(f"User {self.user_id} has no positions.")
             return
-
+        print ("{self.user_id}'s holding positions")
         for question_id, positions in self.question_quantities.items():
             print(f"Question ID: {question_id}")
             print(f"    YES quantity: {positions.get('YES', 0)}")
             print(f"    NO quantity: {positions.get('NO', 0)}\n")
-    # def get_assets(self, question_id, side):
-    #     return self.question_quantities[question_id][side]
+    def get_assets(self, question_id, side):
+        return self.question_quantities[question_id][side]
         
     def get_position_quantity(self, question_id, side):
             # Return the quantity of a specific position ('YES' or 'NO') for a specific question
@@ -71,7 +71,6 @@ class User:
         pass
     
     def place_order(self, market_manager, question_id, trade_type, quantity, side, price):
-        self.display_user_balance()
         # Create an order
         order = Order(self.user_id, question_id, trade_type, quantity, side, price, time())
         # Add the order to the open orders list
