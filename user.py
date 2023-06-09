@@ -16,9 +16,18 @@ class User:
         # Dictionary because each user can buy/sell Yes and No for multiple questions
         self.question_quantities = {}  # Dictionary to track question quantities
         self.question_probabilities = {}  # Dictionary to track question probabilities
-    
-    def get_assets(self, question_id, side):
-        return self.question_quantities[question_id][side]
+        
+    def list_user_positions(self):
+        if not self.question_quantities:
+            print(f"User {self.user_id} has no positions.")
+            return
+
+        for question_id, positions in self.question_quantities.items():
+            print(f"Question ID: {question_id}")
+            print(f"    YES quantity: {positions.get('YES', 0)}")
+            print(f"    NO quantity: {positions.get('NO', 0)}\n")
+    # def get_assets(self, question_id, side):
+    #     return self.question_quantities[question_id][side]
         
     def get_position_quantity(self, question_id, side):
             # Return the quantity of a specific position ('YES' or 'NO') for a specific question

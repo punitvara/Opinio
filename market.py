@@ -8,6 +8,15 @@ class Market:
         self.questions = {}  # key: question_id, value: Question object
         self.order_books = {}  # key: question_id, value: dict of sides, which contains dict of lists (buy and sell)
         self.trades = []  # list of Trade objects
+        self._trade_callbacks = []
+    
+    def register_trade_callback(self, callback):
+        self._trade_callbacks.append(callback)
+    
+    def _notify_trade_callbacks(self, trade):
+        for callback in self._trade_callbacks:
+            callback(trade)
+            
     def get_questions(self):
         return self.questions
     
@@ -56,6 +65,9 @@ class Market:
                 
                 # Here, instead of just logging, we call a method in MarketManager to handle the executed trade
                 # market_manager.handle_executed_trade(trade)
+                
+                # Notify the callbacks
+                self._notify_trade_callbacks(trade)
 
                 # Update order quantities
                 buy_order.quantity -= trade_quantity

@@ -4,6 +4,22 @@ from time import time
 class MarketManager:
     def __init__(self, market):
         self.market = market
+         # Register the handle_executed_trade method as a callback
+        self.market.register_trade_callback(self.handle_executed_trade)
+        # Keep track of users
+        self.users = {}
+    
+    def register_user(self, user):
+        """
+        Register a user with the manager.
+        """
+        self.users[user.user_id] = user
+
+    def get_user_by_id(self, user_id):
+        """
+        Retrieve a user by their user_id.
+        """
+        return self.users.get(user_id)
 
     def create_question(self, q_text):
         q_id = len(self.market.questions) + 1
@@ -40,25 +56,16 @@ class MarketManager:
         
     def handle_executed_trade(self, trade):
         # Get the user instances for buyer and seller
-        buyer = self.get_user_by_id(trade.buyer_id)
+        buyer = self.get_user_by_id(trade.buyer_id)  # You should have some way to retrieve user by ID, I am assuming a get_user_by_id method
         seller = self.get_user_by_id(trade.seller_id)
 
         # Update the buyer's position
         buyer.update_position(trade.question_id, trade.side, trade.quantity)
-        buyer.balance -= trade.quantity * trade.price
+        buyer.wallet.subtract(trade.quantity * trade.price)
 
         # Update the seller's position
         seller.update_position(trade.question_id, trade.side, -trade.quantity)
-        seller.balance += trade.quantity * trade.price
-
-        # Close orders for both buyer and seller
-        buyer.close_order(trade.buy_order)
-        seller.close_order(trade.sell_order)
-
-        # Remove orders from market order book (This can also be done in Market class)
-        self.market.remove_order_from_book(trade.buy_order)
-        self.market.remove_order_from_book(trade.sell_order)
-
+        seller.wallet.add(trade.quantity * trade.price)
 
     def close_user_order(self, user, order):
         # Close the order for the user
