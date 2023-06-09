@@ -1,12 +1,16 @@
 from question import Question
+from time import time
+
 class MarketManager:
     def __init__(self, market):
         self.market = market
 
     def create_question(self, q_text):
         q_id = len(self.market.questions) + 1
-        question = Question(q_id, q_text)
+        question = Question(q_id, q_text, time())
         self.market.add_question(question)
+        return q_id
+        
         
     def add_question(self, user, question):
         # Only admin users can add questions
@@ -32,7 +36,7 @@ class MarketManager:
         self.market.add_order(order)
         
         # Add the order to the user's open orders
-        user.open_orders.append(order)
+        user.open_orders[order.order_id] = order
         
     def handle_executed_trade(self, trade):
         # Get the user instances for buyer and seller
@@ -62,6 +66,9 @@ class MarketManager:
         
         # Potentially, handle transferring funds/assets between users here.
         # In a real-world system, this would involve more complex transaction handling.
+        
+        
+    
 
 # class MarketManager:
 #     def __init__(self, market):

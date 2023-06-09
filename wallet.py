@@ -11,6 +11,6 @@ class Wallet:
         self.balance += amount
         return self
     
-    def substract(self, amount):
+    def subtract(self, amount):
         self.balance -= amount
         return self
