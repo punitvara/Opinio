@@ -4,8 +4,8 @@ import QuestionList from './components/QuestionList';
 
 const App = () => {
     const [questions] = useState([
-        { description: "India to win the match vs Australia ?" },
-        { description: "India to score 42 or more runs by 8.0 overs ?" }
+        { description: "Do you like programming?", yesPrice: 100, noPrice: 50 },
+        { description: "Do you enjoy learning new technologies?", yesPrice: 200, noPrice: 75 }
     ]);
 
     const handleAnswer = (index, answer) => {

@@ -8,6 +8,8 @@ const QuestionList = ({ questions, onAnswer }) => {
                 <Question
                     key={index}
                     description={question.description}
+                    yesPrice={question.yesPrice}
+                    noPrice={question.noPrice}
                     onYes={() => onAnswer(index, true)}
                     onNo={() => onAnswer(index, false)}
                 />
