@@ -68,13 +68,28 @@ def create_question(input: QuestionInput):
     
     return {"question_id": question_id}
 
-# @app.post("/create_question/")
-# def create_question(input: QuestionInput):
-#     # Admin creates a question and gets its ID
-#     input.print_all()
 
 @app.get("/questions/")
 def get_questions():
     # Retrieve all questions
     questions = market.get_questions()
     return questions
+
+
+@app.get("/questions_details/")
+def get_questions_details():
+    # Retrieve all questions with their details
+    questions_objects = market.get_questions() # I assume this returns a list of question objects
+    questions_details = []
+    for _, question in questions_objects.items():
+        question_details = {
+            "question_id": question.q_id, # Replace with the appropriate attribute for question ID
+            "question_text": question.q_text, # Replace with the appropriate attribute for question text
+            "outcome_prices": {
+                "yes": question.outcomes.get_price_yes(), # Replace with the appropriate method to get the YES price
+                "no": question.outcomes.get_price_no() # Replace with the appropriate method to get the NO price
+            }
+        }
+        questions_details.append(question_details)
+    
+    return {"questions": questions_details}
