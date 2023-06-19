@@ -13,6 +13,12 @@ class Outcome:
 
     def set_price_no(self, price: float) -> None:
         self.price_no = price
+    
+    def get_price_yes(self) -> float:
+        return self.price_yes
+
+    def get_price_no(self) -> float:
+        return self.price_no 
         
     def refresh(self):
         pass
