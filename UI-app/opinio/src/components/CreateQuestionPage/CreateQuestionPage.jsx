@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './CreateQuestionPage.module.css';
 
-const CreateQuestionPage = () => {
+const CreateQuestionPage = ({ onQuestionCreated }) => {
   const [formData, setFormData] = useState({
     question: '',
     initial_yes_price: '',
@@ -19,9 +19,11 @@ const CreateQuestionPage = () => {
   };
 
   const handleSubmit = (event) => {
+    console.log('handleSubmit called');
     event.preventDefault();
 
     // Send POST request to localhost:8000/create_question
+    console.log('Making fetch call to create question');
     fetch('http://localhost:8000/create_question', {
       method: 'POST',
       headers: {
@@ -33,6 +35,12 @@ const CreateQuestionPage = () => {
         if (response.ok) {
           // Handle successful response
           console.log('Question created successfully!');
+          // Call the callback function to re-fetch the questions
+          if (onQuestionCreated) {
+            console.log('Calling onQuestionCreated callback');
+            onQuestionCreated();
+            setTimeout(onQuestionCreated, 1000);
+          }
         } else {
           // Handle error response
           console.error('Failed to create question.');
