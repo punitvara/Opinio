@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, WebSocket, HTTPException, Depends
 from pydantic import BaseModel
 from market import Market
 from market_manager import MarketManager
@@ -7,9 +7,14 @@ from roles import UserRole
 import time
 from order import Order
 from outcome import Outcome
+import socketio
 from fastapi.middleware.cors import CORSMiddleware
 
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="*")
 app = FastAPI()
+socket_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
+
+
 
 # Enable CORS
 origins = [
@@ -48,10 +53,17 @@ class QuestionInput(BaseModel):
         print(self.initial_no_price)
         print(self.liquidity_quantity)
         print(self.question_type)
+        
+@sio.event
+async def connect(sid, environ):
+     print('Client connected', sid)
 
+@sio.event
+async def disconnect(sid):
+    print('Client disconnected', sid)
 
 @app.post("/create_question/")
-def create_question(input: QuestionInput):
+async def create_question(input: QuestionInput):
     # Admin creates a question and gets its ID
     question_id = admin_user.create_question(market_manager, input.question)
     outcome = Outcome(question_id)
@@ -61,23 +73,35 @@ def create_question(input: QuestionInput):
     obj.set_outcomes(outcome)
     market_manager.register_event_settlement_callback(question_id)
     
-    
     # Add Liquidity to the market for the question
     market.add_order(Order(1, question_id, 'sell', input.liquidity_quantity, 'YES', input.initial_yes_price, time.time()))
     market.add_order(Order(1, question_id, 'sell', input.liquidity_quantity, 'NO', input.initial_no_price, time.time()))
+    
+    
+    # Construct the details of the new question for frontend
+    new_question_details = {
+        "question_id": question_id,
+        "question_text": input.question,
+        "outcome_prices": {
+            "yes": input.initial_yes_price,
+            "no": input.initial_no_price
+        }
+    }
+    # Notify clients that a new question is added
+    await sio.emit('new_question', new_question_details)
     
     return {"question_id": question_id}
 
 
 @app.get("/questions/")
-def get_questions():
+async def get_questions():
     # Retrieve all questions
     questions = market.get_questions()
     return questions
 
 
 @app.get("/questions_details/")
-def get_questions_details():
+async def get_questions_details():
     # Retrieve all questions with their details
     questions_objects = market.get_questions() # I assume this returns a list of question objects
     questions_details = []
