@@ -10,9 +10,9 @@ const ENDPOINT = 'http://localhost:8000'; // Your server URL
 const App = () => {
     const [questions, setQuestions] = useState([]);
 
-    const fetchQuestions = () => {
+    const fetchQuestions = async () => {
         console.log('fetchQuestions called');
-        fetch('http://localhost:8000/questions_details/')
+        const response = fetch('http://localhost:8000/questions_details/')
             .then(response => response.json())
             .then(data => {
                 console.log('Raw data from the backend:', data);
@@ -27,6 +27,24 @@ const App = () => {
             .catch(error => console.error('Error fetching questions:', error));
     };
 
+    // const fetchQuestions = async () => {
+    //     console.log('fetchQuestions called');
+    //     try {
+    //         const response = await fetch('http://localhost:8000/questions_details/');
+    //         const data = await response.json();
+    //         console.log('Raw data from the backend:', data);
+    //         const fetchedQuestions = data.questions.map(q => ({
+    //             description: q.question_text,
+    //             yesPrice: q.outcome_prices.yes,
+    //             noPrice: q.outcome_prices.no
+    //         }));
+    //         console.log('Updating questions state with:', fetchedQuestions);
+    //         setQuestions(fetchedQuestions);
+    //     } catch (error) {
+    //         console.error('Error fetching questions:', error);
+    //     }
+    // };
+    
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
 
