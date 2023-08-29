@@ -88,3 +88,26 @@ prediction-market-app/
     ├── package.json
     └── ...
 
+Install DB:
+brew install postgresql
+Start server.
+brew services start postgresql
+
+
+Start postgresql in command line mode:
+$ psql postgres
+
+% create New user 
+CREATE USER new_username WITH PASSWORD 'new_password';
+
+% Grant access
+ALTER USER new_username CREATEDB;
+
+% create database
+CREATE DATABASE prediction_market_db;
+
+% Now we have created the database you can access it using below URL
+postgresql://username:password@localhost:5432/prediction_market_db
+
+% Dbeaver
+brew install --cask dbeaver-community

@@ -2,15 +2,26 @@ from wallet import Wallet
 from order import Order
 from time import time
 from roles import UserRole, UserPermission, ROLE_PERMISSIONS
+from database import create_user, update_user, get_user, Session
 
 class User:
     def __init__(self, user_id, user_role=UserRole.NORMAL):
-        self.user_id = user_id
-        self.role = user_role
+        if user_id is None:
+            # Create a new user in the database
+            db_user = create_user(role=user_role, balance=0)
+            self.user_id = db_user.user_id
+        else:
+            # Retrieve an existing user from the database
+            db_user = get_user(user_id)
+            self.user_id = db_user.user_id
+        if db_user is None:
+            raise ValueError("User not found.")
+
+        self.role = db_user.role
         self.permissions = ROLE_PERMISSIONS.get(user_role, [])
-        self.wallet = Wallet(user_id)
+        self.wallet = Wallet(self.user_id)
         self.balance = self.wallet.get_balance()
-        self.user_type = "Normal"
+        # self.user_type = "Normal" -> This is not required any more.
         self.open_orders = {} # Dictionary to track open orders
         self.closed_orders = {} # Dictionary to track closed orders
         # Dictionary because each user can buy/sell Yes and No for multiple questions
@@ -26,6 +37,7 @@ class User:
             print(f"Question ID: {question_id}")
             print(f"    YES quantity: {positions.get('YES', 0)}")
             print(f"    NO quantity: {positions.get('NO', 0)}\n")
+            
     def get_assets(self, question_id, side):
         return self.question_quantities[question_id][side]
         

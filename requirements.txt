@@ -2,3 +2,7 @@ pytest
 fastapi
 uvicorn
 python-socketio
+SQLAlchemy
+psycopg2-binary
+confluent-kafka
+# firebase-admin

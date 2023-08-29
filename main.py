@@ -4,6 +4,12 @@ from user import User
 from roles import UserRole
 import time
 from order import Order
+from database import create_tables, create_user, get_user, Session, create_user
+
+
+# Create database tables
+create_tables()
+
 
 # Create market instance
 market = Market()
@@ -87,3 +93,4 @@ print(f"Liquidity for question {question_id}: YES - {liquidity['YES']}, NO - {li
 # # Get the average price for the question
 # average_price = market.get_price_for_question(question.q_id)
 # print(f"Average price for Question {question.q_id}: {average_price}")
+Session.remove()
